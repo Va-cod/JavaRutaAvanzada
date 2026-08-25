@@ -6,7 +6,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class App {
-    private static final int TOTAL_EMPLEADOS = 10;
+    private static final int TOTAL_EMPLEADOS = 2;
     private static final byte TOTAL_TRIMESTRES = 3;
     private static final double NOTA_MINIMA = 0.0;
     private static final double NOTA_MAXIMA = 10.0;
@@ -35,17 +35,19 @@ public class App {
 
                     switch (opcion) {
                         case 1:
-                            empleadosRegistrados = contadorEmpleados(empleadosRegistrados);
-                            boolean registroExitoso = agregarEmpleado(scanner, empleados, calificaciones, empleadosRegistrados);
-
-                            if (empleadosRegistrados < TOTAL_EMPLEADOS){
-
+                            boolean registroExitoso = false;
+                            if (empleadosRegistrados >= TOTAL_EMPLEADOS){
+                                System.out.println("\n¡Error! Llego al limite de empleados");
+                            } else {
+                                System.out.println("\nEmpleado " + (empleadosRegistrados + 1));
+                                registroExitoso = agregarEmpleado(scanner, empleados, calificaciones, empleadosRegistrados);
                             }
-
-
-
+                            if (registroExitoso){
+                                empleadosRegistrados++;
+                            }
                             break;
                         case 2:
+                            mostrarReporte(empleados, calificaciones, empleadosRegistrados);
                             break;
                         case 3:
                             verCategoriaSalarial();
@@ -103,36 +105,34 @@ public class App {
         }
     }
 
-    public static int contadorEmpleados(int empleadosRegistrados){
-        return empleadosRegistrados++;
-    }
-
     public static boolean agregarEmpleado(Scanner scanner, Empleado[] empleados, double[][] calificaciones, int empleadosRegistrados){
-
 
         System.out.print("Nombre: ");
         String nombre = scanner.nextLine().trim();
         if (nombre.isBlank()){
-            System.out.println("Por favor, escriba un nombre válido.");
+            System.out.println("¡Error! Escriba un nombre válido");
             return false;
         }
 
         System.out.print("Edad: ");
         int edad = scanner.nextInt();
         if (edad < 18 || edad > 65){
-            System.out.println("Edad inválida para trabajar");
+            System.out.println("¡Error! Edad inválida para trabajar");
             return false;
         }
 
         System.out.print("Salario: ");
         int salario = scanner.nextInt();
         if (salario < 0){
-            System.out.println("El salario no puede ser negativo.");
+            System.out.println("¡Error! El salario no puede ser negativo");
             return false;
         }
 
         // Limpiar el Enter pendiente antes de continuar
         scanner.nextLine();
+
+        double suma = 0;
+        double promedioDesempenio;
 
         for (int trimestre = 0; trimestre < TOTAL_TRIMESTRES; trimestre++) {
             System.out.print("Trimestre " + (trimestre + 1) + ": ");
@@ -144,11 +144,26 @@ public class App {
             }
 
             calificaciones[empleadosRegistrados][trimestre] = calificacion;
+            suma += calificacion;
         }
 
-        empleados[empleadosRegistrados] = new Empleado(nombre, (byte) edad, salario);
-        empleadosRegistrados++;
-
+        promedioDesempenio = suma / TOTAL_TRIMESTRES;
+        empleados[empleadosRegistrados] = new Empleado(nombre, (byte) edad, salario, promedioDesempenio);
         return true;
+    }
+
+    public static void mostrarReporte(Empleado[] empleados, double[][] calificaciones, int empleadosRegistrados){
+        if (empleadosRegistrados == 0){
+            System.out.println("Aun no hay empleados registrados");
+            return;
+        }
+
+        for (int fila = 0; fila < empleadosRegistrados; fila++){
+            String estadoAprovacion = (empleados[fila].getPromedio() >= PROMEDIO_PARA_APROBAR) ? "Empleado promovido" : "Empleado no promovido";
+            System.out.println(empleados[fila]);
+            System.out.println("Categoria salarial: " + obtenerCategoriaSalarial(empleados[fila].getSalario()));
+            System.out.println("Estado: " + estadoAprovacion);
+        }
+
     }
 }

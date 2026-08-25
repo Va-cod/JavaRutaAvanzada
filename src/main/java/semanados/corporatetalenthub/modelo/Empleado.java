@@ -13,11 +13,12 @@ public class Empleado {
     private double promedioDesempenio;
 
     // Constructor
-    public Empleado (String nombre, byte edad, int salario){
+    public Empleado (String nombre, byte edad, int salario, double promedioDesempenio){
         this.id = contadorId++;
         this.nombre = nombre;
         this.edad = edad;
         this.salario = salario;
+        this.promedioDesempenio = promedioDesempenio;
     }
 
     // Getters
