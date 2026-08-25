@@ -13,45 +13,55 @@ public class App {
     private static final double PROMEDIO_PARA_APROBAR = 8.0;
 
     public static void main(String[] args) {
-        Empleado[] empleados = new Empleado[TOTAL_EMPLEADOS];
-        int empleadosRegistrados = 0;
-        double[][] calificaciones = new double[TOTAL_EMPLEADOS][TOTAL_TRIMESTRES];
-        int opcion = 0;
 
-        Scanner scanner = new Scanner(System.in);
+        try(Scanner scanner = new Scanner(System.in)) {
 
-        do {
-            try {
-                mostrarMenu();
-                System.out.print("Ingrese una opción: ");
-                opcion = scanner.nextInt();
+            Empleado[] empleados = new Empleado[TOTAL_EMPLEADOS];
+            int empleadosRegistrados = 0;
+            double[][] calificaciones = new double[TOTAL_EMPLEADOS][TOTAL_TRIMESTRES];
+            int opcion = 0;
+
+            do {
+                try {
+                    mostrarMenu();
+                    System.out.print("Ingrese una opción: ");
+                    opcion = scanner.nextInt();
+                    scanner.nextLine(); // Limpia el Enter pendiente
 
                 /* Java 8: el switch tradicional requiere break para evitar
                    el fall-through accidental.
                    Java 17/21: la Switch Expression con -> evita este problema
                    y hace el código más breve y seguro. */
 
-                switch (opcion) {
-                    case 1:
-                        agregarEmpleado(empleados, calificaciones, empleadosRegistrados);
-                        System.out.println(Arrays.toString(empleados));
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        verCategoriaSalarial();
-                        break;
-                    case 4:
-                        break;
-                    default:
-                        System.out.print("Ingrese una opción válida");
-                        break;
+                    switch (opcion) {
+                        case 1:
+                            empleadosRegistrados = contadorEmpleados(empleadosRegistrados);
+                            boolean registroExitoso = agregarEmpleado(scanner, empleados, calificaciones, empleadosRegistrados);
+
+                            if (empleadosRegistrados < TOTAL_EMPLEADOS){
+
+                            }
+
+
+
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            verCategoriaSalarial();
+                            break;
+                        case 4:
+                            break;
+                        default:
+                            System.out.print("Ingrese una opción válida");
+                            break;
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.print("\n¡Error! Ingrese un valor númerico\n");
+                    scanner.nextLine();
                 }
-            } catch(InputMismatchException e){
-                System.out.print("\n¡Error! Ingrese un valor númerico\n");
-                scanner.nextLine();
-            }
-        } while (opcion != 4);
+            } while (opcion != 4);
+        }
     }
 
         public static void mostrarMenu(){
@@ -93,31 +103,52 @@ public class App {
         }
     }
 
-    public static boolean agregarEmpleado(Empleado[] empleados, double[][] calificaciones, int empleadosRegistrados){
-        Scanner scanner = new Scanner(System.in);
+    public static int contadorEmpleados(int empleadosRegistrados){
+        return empleadosRegistrados++;
+    }
+
+    public static boolean agregarEmpleado(Scanner scanner, Empleado[] empleados, double[][] calificaciones, int empleadosRegistrados){
+
 
         System.out.print("Nombre: ");
-        String nombre = scanner.nextLine();
+        String nombre = scanner.nextLine().trim();
+        if (nombre.isBlank()){
+            System.out.println("Por favor, escriba un nombre válido.");
+            return false;
+        }
 
         System.out.print("Edad: ");
-        int edad = Integer.parseInt(scanner.nextLine());
+        int edad = scanner.nextInt();
+        if (edad < 18 || edad > 65){
+            System.out.println("Edad inválida para trabajar");
+            return false;
+        }
 
         System.out.print("Salario: ");
-        int salario = Integer.parseInt(scanner.nextLine());
+        int salario = scanner.nextInt();
+        if (salario < 0){
+            System.out.println("El salario no puede ser negativo.");
+            return false;
+        }
 
-        for (int trimestre = 0; trimestre < TOTAL_TRIMESTRES; trimestre++){
-            System.out.print("Trimetre " + (trimestre + 1) + ": ");
-            double calificacion = Double.parseDouble(scanner.nextLine());
+        // Limpiar el Enter pendiente antes de continuar
+        scanner.nextLine();
 
-            if (calificacion < NOTA_MINIMA || calificacion > NOTA_MAXIMA){
+        for (int trimestre = 0; trimestre < TOTAL_TRIMESTRES; trimestre++) {
+            System.out.print("Trimestre " + (trimestre + 1) + ": ");
+            double calificacion = scanner.nextDouble();
+
+            if (calificacion < NOTA_MINIMA || calificacion > NOTA_MAXIMA) {
                 System.out.println("Por favor, ingrese una nota en este rango [0 - 10]");
                 return false;
             }
+
             calificaciones[empleadosRegistrados][trimestre] = calificacion;
         }
 
         empleados[empleadosRegistrados] = new Empleado(nombre, (byte) edad, salario);
-        System.out.println("Se ha agregado un nuevo empleado");
+        empleadosRegistrados++;
+
         return true;
     }
 }
