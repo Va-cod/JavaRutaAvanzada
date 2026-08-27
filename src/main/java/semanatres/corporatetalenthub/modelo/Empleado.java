@@ -46,8 +46,7 @@ public class Empleado {
 
     @Override
     public String toString() {
-        return "\nEmpleado " + id + "\n" +
-                "Nombre: " + nombre + ", Edad: " + edad + ", Salario: " + salario + ", Promedio desempeño: " + promedioDesempenio;
+        return "\nID: " + id + ", Nombre: " + nombre + ", Edad: " + edad + ", Salario: " + salario + ", Promedio desempeño: " + promedioDesempenio;
     }
 }
 

@@ -2,11 +2,7 @@ package semanatres.corporatetalenthub;
 
 import semanatres.corporatetalenthub.modelo.Empleado;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class App {
     // Variables constantes
@@ -16,13 +12,41 @@ public class App {
     private static final double PROMEDIO_PARA_APROBAR = 8.0;
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
 
+        var opcion = 0;
+
+        try (Scanner scanner = new Scanner(System.in)) {
         // TASK 1: Uso de ArrayList() y HashMap(), para crear estructuras de datos dinámicos
         List<Empleado> empleadosList = new ArrayList<>();
         Map<Integer, Empleado> empleadosMap = new HashMap<>();
-        registrarEmpleado(empleadosList, empleadosMap, scanner);
-        System.out.print(empleadosList);
+            do {
+                try {
+                    System.out.print("\nIngrese una opción: ");
+                    opcion = scanner.nextInt();
+                    scanner.nextLine();
+
+                    switch (opcion) {
+                        case 1:
+                            registrarEmpleado(empleadosList, empleadosMap, scanner);
+                            break;
+                        case 2:
+                            listarEmpleados(empleadosList, empleadosMap);
+                            break;
+                        case 3:
+                            eliminarEmpleado(empleadosList, empleadosMap, scanner);
+                            break;
+                        default:
+                            System.out.print("Ingrese un valor entre 1 y 4");
+                            break;
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.print("\n¡Error! Ingrese el valor adecuado\n");
+                    scanner.nextLine();
+                }
+
+
+            } while (opcion != 4);
+        }
     }
 
     public static void verCategoriaSalarial(){
@@ -55,48 +79,106 @@ public class App {
         }
     }
 
+    // TASK 1
+    // Método static: registrar empleados y almacenarlos en colecciones list y map
     public static boolean registrarEmpleado(List<Empleado> empleadosList, Map<Integer, Empleado> empleadosMap, Scanner scanner){
+        System.out.println("\n* * * * REGISTRO DE EMPLEADOS * * * *");
         var calificacion = 0.0;
         var sumaCalificaciones = 0.0;
         var promedioCalificaciones = 0.0;
 
+        // Validación para los atributos que tendrá el objeto creado
         System.out.print("Nombre: ");
         var nombre = scanner.nextLine().trim();
         if (nombre.isBlank()){
-            System.out.print("¡Error! Escriba un nombre válido");
+            System.out.println("- - - - - Registro invalido - - - - - ");
             return false;
         }
 
-        System.out.print("Edad: ");
+        System.out.print("Edad [18-65]: ");
         var edad = scanner.nextInt();
         if (edad < 18 || edad > 65){
-            System.out.print("¡Error! Edad inválida para trabajar");
+            System.out.println("- - - - - Registro invalido - - - - - ");
             return false;
         }
 
-        System.out.print("Salario: ");
+        System.out.print("Salario : ");
         var salario = scanner.nextInt();
         if (salario < 0){
-            System.out.print("¡Error! El salario no puede ser negativo");
+            System.out.println("- - - - - Registro invalido - - - - - ");
             return false;
         }
 
+        // Bucle for para registrar las calificaciones de cada trimestre
         for (var trimestre = 0; trimestre < TOTAL_TRIMESTRES; trimestre++) {
             System.out.print("Calificación " + (trimestre + 1) + ": ");
             calificacion = scanner.nextDouble();
 
             if (calificacion < NOTA_MINIMA || calificacion > NOTA_MAXIMA){
-                System.out.print("¡Error! Debe ingresar una nota en este rango [0 - 10]");
+                System.out.print("Registro invalido");
                 return false;
             }
             sumaCalificaciones += calificacion;
         }
 
+        // Operación para calcular el promedio de cada empleado
         promedioCalificaciones = sumaCalificaciones / TOTAL_TRIMESTRES;
-        empleadosList.add(new Empleado(nombre, (byte) edad, salario, promedioCalificaciones));
-        empleadosMap.put(empleadosList.get(0).getId(), new Empleado(nombre, (byte) edad, salario, promedioCalificaciones));
+
+        // Crear el objeto después de realizar las validaciones y almacenarlo en una variable
+        var empleado = new Empleado(nombre, (byte) edad, salario, promedioCalificaciones);
+
+        // Almacenar la variable 'empleado' en una list
+        empleadosList.add(empleado);
+
+        // Almacenar la variable 'empleado' en un map
+        empleadosMap.put(empleado.getId(), empleado);
+
+        System.out.println("- - - - - Registro exitoso - - - - -");
 
         return true;
+    }
+
+    // TASK 1
+    // Método static: listar empleados
+    public static void listarEmpleados(List<Empleado> empleadosList, Map<Integer, Empleado> empleadosMap){
+
+        // Validar si hay empleados registrados
+        if (empleadosList.isEmpty()){
+            System.out.print("Aun no hay empleados registrados");
+            return;
+        }
+
+        // Uso de forEach para recorrer el Map y listar cada empleado
+        empleadosMap.forEach((clave, valor) -> {
+            System.out.println(clave + ":" + valor);
+        });
+    }
+
+    // TASK 1
+    // Método static: buscar empleados
+    public static boolean buscarEmpleado(Map<Integer, Empleado> empleadosMap, Integer idEmpleado){
+        return empleadosMap.containsKey(idEmpleado);
+    }
+
+    // TASK 1
+    // Método static: eliminar empleados
+    public static void eliminarEmpleado(List<Empleado> empleadosList, Map<Integer, Empleado> empleadosMap, Scanner scanner){
+        System.out.println("\n* * * * ELIMINAR EMPLEADOS * * * *");
+
+        System.out.print("ID empleado: ");
+        Integer idEmpleado = scanner.nextInt();
+        var resultado = buscarEmpleado(empleadosMap, idEmpleado);
+
+        if (empleadosList.isEmpty()){
+            System.out.println("Resultado: no hay empleados para eliminar");
+        } else if (!resultado){
+            System.out.println("Resultado: empleado no encontrado");
+        } else {
+            empleadosMap.remove(idEmpleado);
+            empleadosList.removeIf(objeto -> objeto.getId() == idEmpleado);
+            System.out.println("Resultado: empleado eliminado");
+        }
+
     }
 }
 
