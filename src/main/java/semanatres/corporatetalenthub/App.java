@@ -43,7 +43,14 @@ public class App {
                             sedesTecnologias();
                             break;
                         case 6:
+                            eliminarEmpleadosNoPromovidos(empleadosList, empleadosMap);
+                            break;
+                        case 7:
+                            generarReporte(empleadosList);
+                            break;
+                        case 8:
                             System.out.print("\nSistema cerrado");
+                            break;
                         default:
                             System.out.print("Ingrese un valor entre 1 y 4");
                             break;
@@ -54,7 +61,7 @@ public class App {
                 }
 
 
-            } while (opcion != 6);
+            } while (opcion != 8);
         }
     }
 
@@ -65,7 +72,10 @@ public class App {
                     2. Registrar empleados
                     3. Listar empleados
                     4. Eliminar empleados
-                    5. Salir
+                    5. Ver sedes y tecnologías
+                    6. Eliminar empleados no promovidos
+                    7. Generar reporte
+                    8. Salir
                     """);
     }
 
@@ -178,16 +188,18 @@ public class App {
             System.out.println("Estado: " + estadoAprovacion);
         });
 
+        // TASK 3: Sintaxis Legacy (8/11) vs Sintaxis Moderna (21)
         System.out.println("\nPrimer empleado: " + empleadosList.getFirst());
         System.out.println("Ultimo empleado: " + empleadosList.getLast());
 
-        // Uso de indices manuales:
-        // System.out.println("Primer empleado: " + empleadosList.get(0));
-        // System.out.println("Ultimo empleado: " + empleadosList.get(empleadosList.size()-1));
-        // System.out.println("Lista en orden inverso: " + empleadosList.reversed());
+         /*
+         Uso de indices manuales:
+         System.out.println("Primer empleado: " + empleadosList.get(0));
+         System.out.println("Ultimo empleado: " + empleadosList.get(empleadosList.size()-1));
+         System.out.println("Lista en orden inverso: " + empleadosList.reversed());
+         */
 
-
-        /*
+         /*
          Java 21 mejora la legibilidad al reemplazar los índices manuales
          get(0) y get(size() - 1) por getFirst() y getLast().
          Esto reduce la posibilidad de cometer errores al calcular índices,
@@ -267,6 +279,43 @@ public class App {
          Estas operaciones generan UnsupportedOperationException.
          */
     }
+
+    // TASK 4: uso del método removeIf
+    public static void eliminarEmpleadosNoPromovidos(List<Empleado> empleadosList, Map<Integer, Empleado> empleadosMap) {
+        System.out.println("\n* * * * ELIMINAR EMPLEADOS NO PROMOVIDOS * * * *");
+
+        boolean empleadosEliminados = empleadosList.removeIf(empleado ->
+                empleado.getPromedio() < PROMEDIO_PARA_APROBAR);
+
+        if (empleadosEliminados) {
+            System.out.println("Resultado: empleados no promovidos eliminados correctamente.");
+        } else {
+            System.out.println("Resultado: no hay empleados para eliminar.");
+        }
+    }
+
+    // TASK 4: Generar un reporte final
+    public static void generarReporte(List<Empleado> empleadosList){
+        System.out.println("\n* * * * REPORTE GENERAL * * * *");
+
+        var sumaSalario = 0;
+        if (empleadosList.isEmpty()) {
+            System.out.println("Resultado: aun no se puede generar un reporte");
+            return;
+        }
+
+        System.out.println("Total empleados: " + empleadosList.size());
+
+        for (var empleado : empleadosList){
+            sumaSalario += empleado.getSalario();
+        }
+
+        var promedioSalario = sumaSalario / empleadosList.size();
+
+        System.out.println("Promedio de salarios: " + promedioSalario);
+
+    }
+
 }
 
 
