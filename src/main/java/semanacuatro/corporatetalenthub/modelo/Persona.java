@@ -7,7 +7,7 @@ public abstract sealed class Persona permits Empleado, ConsultorExterno {
     private final int edad;
     private final double promedioDesempeno;
 
-    public Persona(int id, String nombreCompleto, int edad, double promedioDesempeno) {
+    public Persona(String nombreCompleto, int edad, double promedioDesempeno) {
         this.id = contadorId++;
         this.nombreCompleto = nombreCompleto;
         this.edad = edad;
@@ -32,10 +32,7 @@ public abstract sealed class Persona permits Empleado, ConsultorExterno {
 
     @Override
     public String toString() {
-        return "ID: " + id +
-                ", Nombre: " + nombreCompleto +
-                ", Edad: " + edad +
-                ", Promedio de desempeño: " + promedioDesempeno;
+        return "ID: " + id + ", Nombre: " + nombreCompleto + ", Edad: " + edad + ", Promedio de desempeño: " + promedioDesempeno;
     }
 }
 

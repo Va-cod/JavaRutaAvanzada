@@ -4,8 +4,8 @@ public final class Gerente extends Empleado {
 
     private final double presupuestoMensual;
 
-    public Gerente(int id, String nombreCompleto, int edad, double promedioDesempeno, double salario, double presupuestoMensual) {
-        super(id, nombreCompleto, edad, promedioDesempeno, salario);
+    public Gerente(String nombreCompleto, int edad, double promedioDesempeno, double salario, double presupuestoMensual) {
+        super(nombreCompleto, edad, promedioDesempeno, salario);
         this.presupuestoMensual = presupuestoMensual;
     }
 

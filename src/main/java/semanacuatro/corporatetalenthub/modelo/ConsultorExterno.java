@@ -2,8 +2,8 @@ package semanacuatro.corporatetalenthub.modelo;
 
 public final class ConsultorExterno extends Persona {
 
-    public ConsultorExterno(int id, String nombreCompleto, int edad, double promedioDesempeno) {
-        super(id, nombreCompleto, edad, promedioDesempeno);
+    public ConsultorExterno(String nombreCompleto, int edad, double promedioDesempeno) {
+        super(nombreCompleto, edad, promedioDesempeno);
     }
 
     @Override

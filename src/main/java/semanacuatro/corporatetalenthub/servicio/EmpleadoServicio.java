@@ -1,22 +1,22 @@
 package semanacuatro.corporatetalenthub.servicio;
 
-import semanacuatro.corporatetalenthub.modelo.Empleado;
+import semanacuatro.corporatetalenthub.modelo.Persona;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EmpleadoServicio {
-    private final List<Empleado> empleados;
+    private final List<Persona> empleados;
 
     public EmpleadoServicio() {
         empleados = new ArrayList<>();
     }
 
-    public void agregarEmpleado(Empleado empleado) {
+    public void agregarEmpleado(Persona empleado) {
         empleados.add(empleado);
     }
 
-    public List<Empleado> obtenerEmpleados() {
+    public List<Persona> obtenerEmpleados() {
         return empleados;
     }
 

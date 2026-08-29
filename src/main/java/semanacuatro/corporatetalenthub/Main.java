@@ -13,7 +13,6 @@ public class Main {
 
         EmpleadoControlador controlador = new EmpleadoControlador(servicio, vista);
 
-        controlador.iniciar();
     }
 }
 
