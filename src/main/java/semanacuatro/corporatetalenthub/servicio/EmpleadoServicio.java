@@ -4,12 +4,17 @@ import semanacuatro.corporatetalenthub.modelo.Persona;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EmpleadoServicio {
     private final List<Persona> empleados;
+    private final List<String> tecnologias;
+    private final Map<Integer, String> sedes;
 
     public EmpleadoServicio() {
         empleados = new ArrayList<>();
+        tecnologias = List.of("Java", "Spring Boot", "Python", "JavaScript");
+        sedes = Map.of(1, "Barranquilla",2, "Bogotá",3, "Medellín");
     }
 
     public void agregarEmpleado(Persona empleado) {
@@ -20,9 +25,26 @@ public class EmpleadoServicio {
         return empleados;
     }
 
-    public boolean eliminarEmpleado(int id) {
-        return empleados.removeIf(empleado ->
+    public boolean buscarEmpleado(int id){
+        for (Persona persona : empleados){
+            if (persona.getId() == id){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void eliminarEmpleado(int id) {
+        empleados.removeIf(empleado ->
                 empleado.getId() == id);
+    }
+
+    public List<String> mostrarTecnologias (){
+        return tecnologias;
+    }
+
+    public Map<Integer, String> mostrarSedes (){
+        return sedes;
     }
 
     public static String obtenerCategoriaSalarial(int salario){

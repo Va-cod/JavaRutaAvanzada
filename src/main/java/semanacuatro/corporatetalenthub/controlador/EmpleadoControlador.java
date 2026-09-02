@@ -7,6 +7,8 @@ import semanacuatro.corporatetalenthub.servicio.EmpleadoServicio;
 import semanacuatro.corporatetalenthub.vista.VistaSistema;
 import semanacuatro.corporatetalenthub.modelo.Persona;
 
+import java.util.List;
+
 
 public class EmpleadoControlador {
     private static final byte TOTAL_TRIMESTRES = 3;
@@ -36,7 +38,20 @@ public class EmpleadoControlador {
                     registrarGerente();
                 case 3:
                     registrarConsultorExterno();
-                case 0:
+                case 4:
+                    listarEmpleados();
+                    break;
+                case 5:
+                    eliminarEmpleado();
+                    break;
+                case 6:
+                    listarSedesTecnologias();
+                    break;
+                case 7:
+                    break;
+                case 8:
+                    break;
+                case 9:
                     vista.mostrarMensaje("Saliendo del sistema...");
                     break;
                 default:
@@ -114,6 +129,35 @@ public class EmpleadoControlador {
 
         vista.mostrarMensaje("Empleado registrado correctamente.");
     }
+
+    public void listarEmpleados(){
+       var empleadosList = servicio.obtenerEmpleados();
+       vista.mostrarLista(empleadosList);
+    }
+
+    public void eliminarEmpleado(){
+        int id = vista.solicitarId();
+        var resultado = servicio.buscarEmpleado(id);
+
+        if (resultado) {
+            servicio.eliminarEmpleado(id);
+        } else {
+            vista.mostrarMensaje("El empleado no existe");
+        }
+
+    }
+
+    public void listarSedesTecnologias(){
+        var tecnologias = servicio.mostrarTecnologias();
+        var sedes = servicio.mostrarSedes();
+
+        vista.mostrarTecnologias(tecnologias);
+        vista.mostrarSedes(sedes);
+    }
+
+
+
+
 
 
 

@@ -1,5 +1,9 @@
 package semanacuatro.corporatetalenthub.vista;
 
+import semanacuatro.corporatetalenthub.modelo.Persona;
+
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class VistaSistema {
@@ -14,15 +18,21 @@ public class VistaSistema {
                     * * * * * CORPORATE TALENT HUB * * * * *
                     1. Registrar desarrollador
                     2. Registrar gerente
-                    3. Registrar cosultor externo
-                    5. Listar empleados
-                    6. Eliminar empleados
-                    7. Ver sedes y tecnologías
-                    8. Eliminar empleados no promovidos
-                    9. Generar reporte
-                    10. Salir
+                    3. Registrar consultor externo
+                    4. Listar empleados
+                    5. Eliminar empleados
+                    6. Ver sedes y tecnologías
+                    7. Eliminar empleados no promovidos
+                    8. Generar reporte
+                    9. Salir
                     """);
-        System.out.print("Opcion:");
+        System.out.print("Opcion: ");
+        return scanner.nextInt();
+    }
+
+    public int solicitarId(){
+        scanner.nextLine();
+        System.out.print("Id: ");
         return scanner.nextInt();
     }
 
@@ -59,5 +69,22 @@ public class VistaSistema {
 
     public void mostrarMensaje(String mensaje) {
         System.out.println(mensaje);
+    }
+
+    public void mostrarLista(List<Persona> empleadoList){
+        empleadoList.forEach(System.out::println);
+    }
+
+    public void mostrarTecnologias(List<String> tecnologias){
+        System.out.println("* * * TECNOLOGIAS * * *");
+        tecnologias.forEach(System.out::println);
+    }
+
+    public void mostrarSedes(Map<Integer, String> sedes){
+        System.out.println("* * * SEDES * * *");
+        sedes.forEach((clave, valor) -> {
+                    System.out.println(clave + ": " + valor);
+                }
+        );
     }
 }
