@@ -1,5 +1,6 @@
 package semanacuatro.corporatetalenthub.vista;
 
+import semanacuatro.corporatetalenthub.modelo.DesempenoReporte;
 import semanacuatro.corporatetalenthub.modelo.Persona;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class VistaSistema {
 
     public int mostrarMenu(){
         System.out.print("""
-                    * * * * * CORPORATE TALENT HUB * * * * *
+                    \n* * * * * CORPORATE TALENT HUB * * * * *
                     1. Registrar desarrollador
                     2. Registrar gerente
                     3. Registrar consultor externo
@@ -24,7 +25,10 @@ public class VistaSistema {
                     6. Ver sedes y tecnologías
                     7. Eliminar empleados no promovidos
                     8. Generar reporte
-                    9. Salir
+                    9. Mostra bonos de ascenso
+                    10. Mostrar Empleados por area
+                    10. Salir
+                    ----------------------------------------
                     """);
         System.out.print("Opcion: ");
         return scanner.nextInt();
@@ -48,7 +52,7 @@ public class VistaSistema {
     }
 
     public double solicitarCalificacion(int contador) {
-        System.out.print("Calificacion " + contador + ":");
+        System.out.print("Calificacion " + contador + ": ");
         return scanner.nextDouble();
     }
 
@@ -58,6 +62,7 @@ public class VistaSistema {
     }
 
     public String solicitarLenguajePrincipal() {
+        scanner.nextLine();
         System.out.print("Lenguaje principal: ");
         return scanner.nextLine();
     }
@@ -76,15 +81,22 @@ public class VistaSistema {
     }
 
     public void mostrarTecnologias(List<String> tecnologias){
-        System.out.println("* * * TECNOLOGIAS * * *");
+        System.out.println("\nTECNOLOGIAS");
         tecnologias.forEach(System.out::println);
     }
 
     public void mostrarSedes(Map<Integer, String> sedes){
-        System.out.println("* * * SEDES * * *");
+        System.out.println("\nSEDES");
         sedes.forEach((clave, valor) -> {
-                    System.out.println(clave + ": " + valor);
-                }
-        );
+            System.out.println(clave + ": " + valor);
+        });
+    }
+
+    public void mostrarReporte(List<DesempenoReporte> reportes){
+        reportes.forEach(System.out::println);
+    }
+
+    public void mostrarBonos(List<String> bonos){
+        bonos.forEach(System.out::println);
     }
 }

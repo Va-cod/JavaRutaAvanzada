@@ -1,14 +1,8 @@
 package semanacuatro.corporatetalenthub.controlador;
 
-import semanacuatro.corporatetalenthub.modelo.ConsultorExterno;
-import semanacuatro.corporatetalenthub.modelo.Desarrollador;
-import semanacuatro.corporatetalenthub.modelo.Gerente;
+import semanacuatro.corporatetalenthub.modelo.*;
 import semanacuatro.corporatetalenthub.servicio.EmpleadoServicio;
 import semanacuatro.corporatetalenthub.vista.VistaSistema;
-import semanacuatro.corporatetalenthub.modelo.Persona;
-
-import java.util.List;
-
 
 public class EmpleadoControlador {
     private static final byte TOTAL_TRIMESTRES = 3;
@@ -36,8 +30,10 @@ public class EmpleadoControlador {
                     break;
                 case 2:
                     registrarGerente();
+                    break;
                 case 3:
                     registrarConsultorExterno();
+                    break;
                 case 4:
                     listarEmpleados();
                     break;
@@ -48,20 +44,28 @@ public class EmpleadoControlador {
                     listarSedesTecnologias();
                     break;
                 case 7:
+                    eliminarEmpleadosNoPromovidos();
                     break;
                 case 8:
+                    mostrarReporte();
                     break;
                 case 9:
+                    mostrarEmpleadosPromovidos();
+                    break;
+                case 10:
+                    mostrarEmpleadoArea();
+                    break;
+                case 11:
                     vista.mostrarMensaje("Saliendo del sistema...");
                     break;
                 default:
-                    vista.mostrarMensaje("Opción inválida.");
+                    vista.mostrarMensaje("Opción inválida");
             }
-        } while (opcion != 0);
+        } while (opcion != 10);
     }
 
     private void registrarDesarrollador() {
-
+        vista.mostrarMensaje("\n* * * * * Registrar Desarrollador * * * * *");
         String nombre = vista.solicitarNombre();
         int edad = vista.solicitarEdad();
         double salario = vista.solicitarSalario();
@@ -71,7 +75,7 @@ public class EmpleadoControlador {
         for (var trimestre = 0; trimestre < TOTAL_TRIMESTRES; trimestre++) {
             double calificacion = vista.solicitarCalificacion(trimestre + 1);
             if (calificacion < NOTA_MINIMA || calificacion > NOTA_MAXIMA){
-                System.out.print("Registro invalido");
+                vista.mostrarMensaje("Ingrese una nota entre 1 y 10");
                 return;
             }
             sumaCalificacion += calificacion;
@@ -81,12 +85,18 @@ public class EmpleadoControlador {
         Persona empleado = new Desarrollador(nombre, edad, promedioDesempeno, salario, lenguajePrinciapl);
         servicio.agregarEmpleado(empleado);
 
-        vista.mostrarMensaje("Empleado registrado correctamente.");
+        var id = empleado.getId();
+        var promedio = empleado.getPromedioDesempeno();
+        var feedback = (empleado.getPromedioDesempeno() > PROMEDIO_PARA_APROBAR) ? "Promovido" : "No promovido";
+        DesempenoReporte reporte = new DesempenoReporte(id, promedio, feedback);
+        servicio.agregarReporte(reporte);
+
+        vista.mostrarMensaje("Empleado registrado correctamente");
     }
 
 
     private void registrarGerente() {
-
+        vista.mostrarMensaje("\n* * * * * Registrar Gerente * * * * *");
         String nombre = vista.solicitarNombre();
         int edad = vista.solicitarEdad();
         double salario = vista.solicitarSalario();
@@ -106,10 +116,17 @@ public class EmpleadoControlador {
         Persona empleado = new Gerente(nombre, edad, promedioDesempeno, salario, presupuestoMensual);
         servicio.agregarEmpleado(empleado);
 
-        vista.mostrarMensaje("Empleado registrado correctamente.");
+        var id = empleado.getId();
+        var promedio = empleado.getPromedioDesempeno();
+        var feedback = (empleado.getPromedioDesempeno() > PROMEDIO_PARA_APROBAR) ? "Promovido" : "No promovido";
+        DesempenoReporte reporte = new DesempenoReporte(id, promedio, feedback);
+        servicio.agregarReporte(reporte);
+
+        vista.mostrarMensaje("Empleado registrado correctamente");
     }
 
     private void registrarConsultorExterno() {
+        vista.mostrarMensaje("\n* * * * * Registrar Consultor Externo * * * * *");
         String nombre = vista.solicitarNombre();
         int edad = vista.solicitarEdad();
 
@@ -127,24 +144,44 @@ public class EmpleadoControlador {
         Persona empleado = new ConsultorExterno(nombre, edad, promedioDesempeno);
         servicio.agregarEmpleado(empleado);
 
-        vista.mostrarMensaje("Empleado registrado correctamente.");
+        var id = empleado.getId();
+        var promedio = empleado.getPromedioDesempeno();
+        var feedback = (empleado.getPromedioDesempeno() > PROMEDIO_PARA_APROBAR) ? "Promovido" : "No promovido";
+        DesempenoReporte reporte = new DesempenoReporte(id, promedio, feedback);
+        servicio.agregarReporte(reporte);
+
+        vista.mostrarMensaje("Empleado registrado correctamente");
     }
 
     public void listarEmpleados(){
-       var empleadosList = servicio.obtenerEmpleados();
-       vista.mostrarLista(empleadosList);
+        vista.mostrarMensaje("\n* * * * * Listar Empleados * * * * *");
+        var resultado = servicio.estadoLista();
+
+        if (resultado){
+            var empleadosList = servicio.obtenerEmpleados();
+            vista.mostrarLista(empleadosList);
+        } else {
+            vista.mostrarMensaje("Aun no hay empleados registrados");
+        }
     }
 
-    public void eliminarEmpleado(){
-        int id = vista.solicitarId();
-        var resultado = servicio.buscarEmpleado(id);
-
-        if (resultado) {
-            servicio.eliminarEmpleado(id);
-        } else {
-            vista.mostrarMensaje("El empleado no existe");
+    public void eliminarEmpleado() {
+        vista.mostrarMensaje("* * * * * Eliminar Empleados * * * * *");
+        if (!servicio.estadoLista()) {
+            vista.mostrarMensaje("No hay empleados registrados");
+            return;
         }
 
+        int id = vista.solicitarId();
+
+        if (!servicio.buscarEmpleado(id)) {
+            vista.mostrarMensaje("No existe un empleado con el ID: " + id);
+            return;
+        }
+
+        servicio.eliminarEmpleado(id);
+        servicio.eliminarReporte(id);
+        vista.mostrarMensaje("El empleado fue eliminado");
     }
 
     public void listarSedesTecnologias(){
@@ -153,6 +190,43 @@ public class EmpleadoControlador {
 
         vista.mostrarTecnologias(tecnologias);
         vista.mostrarSedes(sedes);
+    }
+
+    public void mostrarReporte(){
+        vista.mostrarMensaje("\n* * * * * Reporte General * * * * *");
+        if (!servicio.estadoLista()) {
+            vista.mostrarMensaje("No hay empleados registrados");
+            return;
+        }
+        vista.mostrarReporte(servicio.mostrarReporte());
+    }
+
+    public void eliminarEmpleadosNoPromovidos() {
+        vista.mostrarMensaje("\n* * * * ELIMINAR EMPLEADOS NO PROMOVIDOS * * * *");
+
+        var empleadosList = servicio.obtenerEmpleados();
+
+        boolean empleadosEliminados = empleadosList.removeIf(empleado -> empleado.getPromedioDesempeno() < PROMEDIO_PARA_APROBAR);
+
+        if (empleadosEliminados) {
+            System.out.println("Empleados no promovidos eliminados correctamente");
+        } else {
+            System.out.println("No hay empleados para eliminar");
+        }
+    }
+
+    public void mostrarEmpleadosPromovidos(){
+        vista.mostrarMensaje("\n* * * * EMPLEADOS PROMOVIDOS * * * *");
+        var empleadosList = servicio.obtenerEmpleados();
+        var bonos = servicio.bonoAscenso(empleadosList);
+        vista.mostrarBonos(bonos);
+    }
+
+    public void mostrarEmpleadoArea(){
+        var empleadosList = servicio.obtenerEmpleados();
+        var departamentos = servicio.departamentos(empleadosList);
+        vista.mostrarBonos(departamentos);
+
     }
 
 

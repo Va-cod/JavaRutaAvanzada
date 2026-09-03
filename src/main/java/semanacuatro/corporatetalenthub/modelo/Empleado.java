@@ -15,7 +15,6 @@ public sealed class Empleado extends Persona permits Desarrollador, Gerente {
 
     @Override
     public String toString() {
-        return super.toString() +
-                ", Salario: " + salario;
+        return super.toString() + ", Salario: " + salario;
     }
 }

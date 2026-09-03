@@ -1,20 +1,30 @@
 package semanacuatro.corporatetalenthub.servicio;
 
-import semanacuatro.corporatetalenthub.modelo.Persona;
+import semanacuatro.corporatetalenthub.modelo.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EmpleadoServicio {
+public class EmpleadoServicio implements Promocionable{
     private final List<Persona> empleados;
+    private final List<DesempenoReporte> reportes;
     private final List<String> tecnologias;
     private final Map<Integer, String> sedes;
+    private final List<String> bonos;
+    private final List<String> departamentos;
 
     public EmpleadoServicio() {
+        reportes = new ArrayList<>();
         empleados = new ArrayList<>();
         tecnologias = List.of("Java", "Spring Boot", "Python", "JavaScript");
         sedes = Map.of(1, "Barranquilla",2, "Bogotá",3, "Medellín");
+        bonos = new ArrayList<>();
+        departamentos = new ArrayList<>();
+    }
+
+    public boolean estadoLista(){
+        return !empleados.isEmpty();
     }
 
     public void agregarEmpleado(Persona empleado) {
@@ -34,36 +44,55 @@ public class EmpleadoServicio {
         return false;
     }
 
-    public void eliminarEmpleado(int id) {
-        empleados.removeIf(empleado ->
-                empleado.getId() == id);
+    public void eliminarEmpleado(int id){
+        empleados.removeIf(empleado -> empleado.getId() == id);
     }
 
-    public List<String> mostrarTecnologias (){
+    public void eliminarReporte(int id){
+        reportes.removeIf(reporte -> reporte.idEmpleado() == id);
+    }
+
+    public List<String> mostrarTecnologias(){
         return tecnologias;
     }
 
-    public Map<Integer, String> mostrarSedes (){
+    public Map<Integer, String> mostrarSedes(){
         return sedes;
     }
 
-    public static String obtenerCategoriaSalarial(int salario){
-        int categoria = determinarCategoriaSalarial(salario);
-        return switch (categoria){
-            case 1 -> "JUNIOR";
-            case 2 -> "SENIOR";
-            case 3 -> "EXPERT";
-            default -> "Categoria no encontrada";
-        };
+    public void agregarReporte(DesempenoReporte reporte){
+        reportes.add(reporte);
     }
 
-    public static int determinarCategoriaSalarial(int salario){
-        if (salario <= 3_000_000) {
-            return 1;
-        } else if (salario < 5_000_000) {
-            return 2;
-        } else {
-            return 3;
-        }
+    public List<DesempenoReporte> mostrarReporte(){
+        return reportes;
     }
+
+    public List<String> departamentos (List<Persona> empleados){
+        for (Persona empleado : empleados){
+            if (empleado instanceof Desarrollador e){
+                departamentos.add("Nombre: " + e.getNombreCompleto() + AreaDesarrollo());
+            }
+            if (empleado instanceof Gerente e){
+                departamentos.add("Nombre: " + e.getNombreCompleto() + AreaFinanzas());
+            }
+        }
+        return departamentos;
+
+    }
+
+
+    @Override
+    public List<String> bonoAscenso(List<Persona> empleados) {
+
+        for (Persona empleado : empleados){
+            if (empleado instanceof Empleado e && e.getPromedioDesempeno() >= 8 ){
+                bonos.add("Nombre: " + e.getNombreCompleto() + ", Nuevo salario: " + (e.getSalario() + 200));
+            }
+        }
+        return bonos;
+    }
+
+
 }
+
